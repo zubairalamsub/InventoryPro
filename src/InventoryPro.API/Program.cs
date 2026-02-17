@@ -90,11 +90,15 @@ try
     // Map Carter endpoints
     app.MapCarter();
 
-    // Map Hangfire dashboard (admin only)
-    app.MapHangfireDashboard("/hangfire", new DashboardOptions
+    // Map Hangfire dashboard (admin only) - only if enabled
+    var enableHangfire = builder.Configuration.GetValue<bool>("EnableHangfire", false);
+    if (enableHangfire)
     {
-        Authorization = new[] { new HangfireAuthorizationFilter() }
-    });
+        app.MapHangfireDashboard("/hangfire", new DashboardOptions
+        {
+            Authorization = new[] { new HangfireAuthorizationFilter() }
+        });
+    }
 
     // Apply migrations (can be enabled in production via env var)
     var runMigrations = app.Environment.IsDevelopment() ||

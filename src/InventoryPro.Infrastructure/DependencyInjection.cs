@@ -125,16 +125,23 @@ public static class DependencyInjection
             .AddPolicy("RequireSystemAdmin", policy =>
                 policy.RequireRole("SystemAdmin"));
 
-        // Add Hangfire
-        services.AddHangfire(config =>
+        // Add Hangfire (optional - disable in production if not needed)
+        var enableHangfire = configuration.GetValue<bool>("EnableHangfire", false);
+        if (enableHangfire)
         {
-            config.UsePostgreSqlStorage(options =>
+            var hangfireConnectionString = configuration.GetConnectionString("DefaultConnection");
+            if (!string.IsNullOrEmpty(hangfireConnectionString))
             {
-                options.UseNpgsqlConnection(configuration.GetConnectionString("DefaultConnection"));
-            });
-        });
-
-        services.AddHangfireServer();
+                services.AddHangfire(config =>
+                {
+                    config.UsePostgreSqlStorage(options =>
+                    {
+                        options.UseNpgsqlConnection(hangfireConnectionString);
+                    });
+                });
+                services.AddHangfireServer();
+            }
+        }
 
         // Register services
         services.AddScoped<IDateTime, DateTimeService>();
