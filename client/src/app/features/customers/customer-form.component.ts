@@ -143,7 +143,18 @@ export class CustomerFormComponent implements OnInit {
     this.isLoading.set(true);
     this.apiService.get<any>(`/api/customers/${this.customerId}`).subscribe({
       next: (customer) => {
-        this.form.patchValue(customer);
+        // Map API response to form fields
+        this.form.patchValue({
+          name: customer.name,
+          email: customer.email,
+          phone: customer.phone,
+          address: customer.street,
+          city: customer.city,
+          country: customer.country,
+          creditLimit: customer.creditLimit,
+          taxNumber: customer.taxIdentificationNo,
+          isActive: customer.isActive
+        });
         this.isLoading.set(false);
       },
       error: () => {
@@ -157,7 +168,20 @@ export class CustomerFormComponent implements OnInit {
     if (this.form.invalid) return;
 
     this.isLoading.set(true);
-    const data = this.form.value;
+    const formValue = this.form.value;
+
+    // Map form fields to API request format
+    const data = {
+      name: formValue.name,
+      email: formValue.email || null,
+      phone: formValue.phone || null,
+      street: formValue.address || null,
+      city: formValue.city || null,
+      country: formValue.country || null,
+      creditLimit: formValue.creditLimit || null,
+      taxIdentificationNo: formValue.taxNumber || null,
+      isActive: formValue.isActive
+    };
 
     const request = this.isEditMode()
       ? this.apiService.put(`/api/customers/${this.customerId}`, data)

@@ -155,7 +155,22 @@ export class ProductFormComponent implements OnInit {
     if (this.form.invalid) return;
 
     this.isLoading.set(true);
-    const data = this.form.value;
+    const formValue = this.form.value;
+
+    // Build request data - isActive only supported on update
+    const data: any = {
+      name: formValue.name,
+      sku: formValue.sku,
+      costPrice: formValue.costPrice,
+      sellingPrice: formValue.sellingPrice,
+      barcode: formValue.barcode || null,
+      description: formValue.description || null,
+      reorderLevel: formValue.reorderLevel || 10
+    };
+
+    if (this.isEditMode()) {
+      data.isActive = formValue.isActive;
+    }
 
     const request = this.isEditMode()
       ? this.apiService.put(`/api/products/${this.productId}`, data)

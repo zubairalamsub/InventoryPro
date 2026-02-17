@@ -12,6 +12,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
 {
     private readonly ITenantProvider? _tenantProvider;
 
+    // This property is evaluated at query time, not at model build time
+    public Guid? CurrentTenantId => _tenantProvider?.GetTenantId();
+
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
     }
@@ -106,26 +109,26 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
 
     private void ApplyTenantQueryFilters(ModelBuilder builder)
     {
-        var tenantId = _tenantProvider?.GetTenantId();
-
         // Apply tenant filter to all entities implementing ITenantEntity
+        // The filter uses CurrentTenantId property which is evaluated at query time
         foreach (var entityType in builder.Model.GetEntityTypes())
         {
             if (typeof(ITenantEntity).IsAssignableFrom(entityType.ClrType))
             {
-                var parameter = System.Linq.Expressions.Expression.Parameter(entityType.ClrType, "e");
-                var tenantIdProperty = System.Linq.Expressions.Expression.Property(parameter, nameof(ITenantEntity.TenantId));
+                var method = typeof(ApplicationDbContext)
+                    .GetMethod(nameof(ApplyTenantFilter), System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)?
+                    .MakeGenericMethod(entityType.ClrType);
 
-                if (tenantId.HasValue)
-                {
-                    var tenantIdValue = System.Linq.Expressions.Expression.Constant(tenantId.Value, typeof(Guid));
-                    var filter = System.Linq.Expressions.Expression.Equal(tenantIdProperty, tenantIdValue);
-                    var lambda = System.Linq.Expressions.Expression.Lambda(filter, parameter);
-
-                    builder.Entity(entityType.ClrType).HasQueryFilter(lambda);
-                }
+                method?.Invoke(null, new object[] { builder, this });
             }
         }
+    }
+
+    private static void ApplyTenantFilter<T>(ModelBuilder builder, ApplicationDbContext context) where T : class, ITenantEntity
+    {
+        // This filter is evaluated at query time using the CurrentTenantId property
+        builder.Entity<T>().HasQueryFilter(e =>
+            context.CurrentTenantId == null || e.TenantId == context.CurrentTenantId);
     }
 
     private static void ApplySoftDeleteFilters(ModelBuilder builder)
