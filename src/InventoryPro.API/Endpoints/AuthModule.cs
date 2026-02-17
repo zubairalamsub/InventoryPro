@@ -40,6 +40,7 @@ public class AuthModule : ICarterModule
             request.Email,
             request.Password,
             request.FullName,
+            request.CompanyName,
             request.TenantId);
 
         var result = await sender.Send(command, cancellationToken);
@@ -89,7 +90,7 @@ public class AuthModule : ICarterModule
     }
 }
 
-public record RegisterRequest(string Email, string Password, string FullName, Guid TenantId);
+public record RegisterRequest(string Email, string Password, string FullName, string? CompanyName = null, Guid? TenantId = null);
 public record LoginRequest(string Email, string Password);
 public record RefreshTokenRequest(string RefreshToken);
 public record LogoutRequest(string RefreshToken);

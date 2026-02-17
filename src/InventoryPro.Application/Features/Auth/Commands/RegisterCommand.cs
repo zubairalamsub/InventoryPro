@@ -11,7 +11,8 @@ public record RegisterCommand(
     string Email,
     string Password,
     string FullName,
-    Guid TenantId) : ICommand<RegisterResponse>;
+    string? CompanyName = null,
+    Guid? TenantId = null) : ICommand<RegisterResponse>;
 
 public record RegisterResponse(Guid UserId, string Email);
 
@@ -35,22 +36,30 @@ public class RegisterCommandValidator : AbstractValidator<RegisterCommand>
             .NotEmpty().WithMessage("Full name is required")
             .MaximumLength(200).WithMessage("Full name cannot exceed 200 characters");
 
-        RuleFor(x => x.TenantId)
-            .NotEmpty().WithMessage("Tenant ID is required");
+        // Either TenantId or CompanyName must be provided
+        RuleFor(x => x)
+            .Must(x => x.TenantId.HasValue || !string.IsNullOrWhiteSpace(x.CompanyName))
+            .WithMessage("Either TenantId or CompanyName is required");
     }
 }
 
 public class RegisterCommandHandler : ICommandHandler<RegisterCommand, RegisterResponse>
 {
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly RoleManager<IdentityRole<Guid>> _roleManager;
     private readonly IRepository<Tenant> _tenantRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
     public RegisterCommandHandler(
         UserManager<ApplicationUser> userManager,
-        IRepository<Tenant> tenantRepository)
+        RoleManager<IdentityRole<Guid>> roleManager,
+        IRepository<Tenant> tenantRepository,
+        IUnitOfWork unitOfWork)
     {
         _userManager = userManager;
+        _roleManager = roleManager;
         _tenantRepository = tenantRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<Result<RegisterResponse>> Handle(RegisterCommand request, CancellationToken cancellationToken)
@@ -63,12 +72,37 @@ public class RegisterCommandHandler : ICommandHandler<RegisterCommand, RegisterR
                 Error.Conflict("Auth.EmailExists", "A user with this email already exists."));
         }
 
-        // Validate tenant
-        var tenant = await _tenantRepository.GetByIdAsync(request.TenantId, cancellationToken);
-        if (tenant == null || !tenant.IsActive)
+        Guid tenantId;
+
+        if (request.TenantId.HasValue)
         {
-            return Result.Failure<RegisterResponse>(
-                Error.Validation("Auth.InvalidTenant", "The specified tenant is invalid or inactive."));
+            // Validate existing tenant
+            var tenant = await _tenantRepository.GetByIdAsync(request.TenantId.Value, cancellationToken);
+            if (tenant == null || !tenant.IsActive)
+            {
+                return Result.Failure<RegisterResponse>(
+                    Error.Validation("Auth.InvalidTenant", "The specified tenant is invalid or inactive."));
+            }
+            tenantId = tenant.Id;
+        }
+        else
+        {
+            // Create new tenant with CompanyName
+            var subdomain = request.CompanyName!.ToLower()
+                .Replace(" ", "-")
+                .Replace(".", "")
+                .Replace("'", "");
+
+            var newTenant = new Tenant
+            {
+                Name = request.CompanyName!,
+                Subdomain = subdomain + "-" + Guid.NewGuid().ToString()[..8],
+                IsActive = true
+            };
+
+            await _tenantRepository.AddAsync(newTenant, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            tenantId = newTenant.Id;
         }
 
         var user = new ApplicationUser
@@ -76,7 +110,8 @@ public class RegisterCommandHandler : ICommandHandler<RegisterCommand, RegisterR
             UserName = request.Email,
             Email = request.Email,
             FullName = request.FullName,
-            TenantId = request.TenantId,
+            TenantId = tenantId,
+            Role = request.TenantId.HasValue ? Domain.Enums.UserRole.Viewer : Domain.Enums.UserRole.TenantAdmin,
             IsActive = true,
             CreatedAt = DateTime.UtcNow
         };
@@ -88,6 +123,16 @@ public class RegisterCommandHandler : ICommandHandler<RegisterCommand, RegisterR
             var errors = string.Join(", ", result.Errors.Select(e => e.Description));
             return Result.Failure<RegisterResponse>(
                 Error.Validation("Auth.RegistrationFailed", errors));
+        }
+
+        // Add to TenantAdmin role if creating new company
+        if (!request.TenantId.HasValue)
+        {
+            if (!await _roleManager.RoleExistsAsync("TenantAdmin"))
+            {
+                await _roleManager.CreateAsync(new IdentityRole<Guid>("TenantAdmin"));
+            }
+            await _userManager.AddToRoleAsync(user, "TenantAdmin");
         }
 
         return Result.Success(new RegisterResponse(user.Id, user.Email!));
