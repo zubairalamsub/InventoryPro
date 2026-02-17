@@ -1,0 +1,27 @@
+# Render Blueprint - https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: inventorypro-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    region: oregon
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ConnectionStrings__DefaultConnection
+        sync: false  # Set this manually in Render dashboard
+      - key: JwtSettings__Secret
+        generateValue: true
+      - key: JwtSettings__Issuer
+        value: InventoryPro
+      - key: JwtSettings__Audience
+        value: InventoryProUsers
+      - key: JwtSettings__ExpirationInMinutes
+        value: "60"
+      - key: JwtSettings__RefreshTokenExpirationInDays
+        value: "7"
+      - key: AllowedOrigins
+        sync: false  # Set your Vercel URL here

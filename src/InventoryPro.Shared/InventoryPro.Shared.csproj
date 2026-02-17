@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>InventoryPro.Shared</RootNamespace>
+    <AssemblyName>InventoryPro.Shared</AssemblyName>
+  </PropertyGroup>
+
+</Project>

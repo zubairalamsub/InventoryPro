@@ -1,0 +1,36 @@
+# Git
+.git
+.gitignore
+
+# Node
+**/node_modules
+
+# Build outputs
+**/bin
+**/obj
+**/out
+
+# Client (Angular)
+client
+
+# Test coverage
+**/coverage
+
+# IDE
+.vs
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Misc
+*.md
+*.txt
+!LICENSE.txt
+docker-compose*.yml
+.env*
+*.log

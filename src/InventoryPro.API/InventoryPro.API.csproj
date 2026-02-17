@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <RootNamespace>InventoryPro.API</RootNamespace>
+    <AssemblyName>InventoryPro.API</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AspNetCore.HealthChecks.NpgSql" />
+    <PackageReference Include="Carter" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="Scalar.AspNetCore" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Common" />
+    <PackageReference Include="Microsoft.FeatureManagement.AspNetCore" />
+    <PackageReference Include="Serilog.AspNetCore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\InventoryPro.Application\InventoryPro.Application.csproj" />
+    <ProjectReference Include="..\InventoryPro.Infrastructure\InventoryPro.Infrastructure.csproj" />
+    <ProjectReference Include="..\InventoryPro.Shared\InventoryPro.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

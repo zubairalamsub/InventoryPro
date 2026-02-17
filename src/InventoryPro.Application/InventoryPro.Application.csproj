@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>InventoryPro.Application</RootNamespace>
+    <AssemblyName>InventoryPro.Application</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+    <PackageReference Include="Mapster" />
+    <PackageReference Include="Mapster.DependencyInjection" />
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Hybrid" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Core" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\InventoryPro.Domain\InventoryPro.Domain.csproj" />
+    <ProjectReference Include="..\InventoryPro.Shared\InventoryPro.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

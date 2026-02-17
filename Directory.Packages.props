@@ -1,0 +1,88 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Entity Framework Core -->
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.0" />
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.0" />
+
+    <!-- ASP.NET Core Identity -->
+    <PackageVersion Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Identity.Core" Version="9.0.0" />
+
+    <!-- MediatR & CQRS -->
+    <PackageVersion Include="MediatR" Version="12.4.1" />
+
+    <!-- Carter for Minimal APIs -->
+    <PackageVersion Include="Carter" Version="8.2.1" />
+
+    <!-- Validation -->
+    <PackageVersion Include="FluentValidation" Version="11.10.0" />
+    <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="11.10.0" />
+
+    <!-- Mapping -->
+    <PackageVersion Include="Mapster" Version="7.4.0" />
+    <PackageVersion Include="Mapster.DependencyInjection" Version="1.0.1" />
+
+    <!-- Caching -->
+    <PackageVersion Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Caching.Hybrid" Version="9.0.0-preview.9.24556.5" />
+
+    <!-- Real-time -->
+    <PackageVersion Include="Microsoft.AspNetCore.SignalR.Common" Version="9.0.0" />
+
+    <!-- Background Jobs -->
+    <PackageVersion Include="Hangfire.Core" Version="1.8.17" />
+    <PackageVersion Include="Hangfire.AspNetCore" Version="1.8.17" />
+    <PackageVersion Include="Hangfire.PostgreSql" Version="1.20.10" />
+
+    <!-- Logging -->
+    <PackageVersion Include="Serilog" Version="4.1.0" />
+    <PackageVersion Include="Serilog.AspNetCore" Version="8.0.3" />
+    <PackageVersion Include="Serilog.Sinks.Console" Version="6.0.0" />
+    <PackageVersion Include="Serilog.Sinks.File" Version="6.0.0" />
+    <PackageVersion Include="Serilog.Sinks.Seq" Version="8.0.0" />
+    <PackageVersion Include="Serilog.Enrichers.Environment" Version="3.0.1" />
+    <PackageVersion Include="Serilog.Enrichers.Thread" Version="4.0.0" />
+
+    <!-- PDF Generation -->
+    <PackageVersion Include="QuestPDF" Version="2024.10.2" />
+
+    <!-- Excel Import/Export -->
+    <PackageVersion Include="ClosedXML" Version="0.104.1" />
+
+    <!-- Email -->
+    <PackageVersion Include="MailKit" Version="4.8.0" />
+    <PackageVersion Include="FluentEmail.Core" Version="3.0.2" />
+    <PackageVersion Include="FluentEmail.MailKit" Version="3.0.2" />
+
+    <!-- API Documentation -->
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
+    <PackageVersion Include="Scalar.AspNetCore" Version="1.2.51" />
+
+    <!-- Testing -->
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageVersion Include="xunit" Version="2.9.2" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <PackageVersion Include="Moq" Version="4.20.72" />
+    <PackageVersion Include="FluentAssertions" Version="6.12.2" />
+    <PackageVersion Include="Testcontainers" Version="3.10.0" />
+    <PackageVersion Include="Testcontainers.PostgreSql" Version="3.10.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.0" />
+    <PackageVersion Include="coverlet.collector" Version="6.0.2" />
+
+    <!-- Utilities -->
+    <PackageVersion Include="Ardalis.GuardClauses" Version="5.0.0" />
+    <PackageVersion Include="Polly" Version="8.5.0" />
+    <PackageVersion Include="Microsoft.FeatureManagement.AspNetCore" Version="4.0.0" />
+
+    <!-- Health Checks -->
+    <PackageVersion Include="AspNetCore.HealthChecks.NpgSql" Version="8.0.2" />
+  </ItemGroup>
+</Project>
