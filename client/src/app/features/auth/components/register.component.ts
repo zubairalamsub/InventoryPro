@@ -128,7 +128,14 @@ export class RegisterComponent {
     this.isLoading.set(true);
     this.errorMessage.set('');
 
-    this.authService.register(this.registerForm.value).subscribe({
+    const formValue = this.registerForm.value;
+    const request = {
+      email: formValue.email,
+      password: formValue.password,
+      fullName: formValue.fullName,
+      companyName: formValue.tenantName
+    };
+    this.authService.register(request).subscribe({
       next: () => {
         this.router.navigate(['/dashboard']);
       },

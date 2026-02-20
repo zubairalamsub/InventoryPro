@@ -13,7 +13,7 @@ export interface RegisterRequest {
   email: string;
   password: string;
   fullName: string;
-  tenantName?: string;
+  companyName?: string;
 }
 
 export interface AuthResponse {
