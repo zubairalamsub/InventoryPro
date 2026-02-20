@@ -26,6 +26,13 @@ try
     builder.Services.AddApplication();
     builder.Services.AddInfrastructure(builder.Configuration);
 
+    // Configure JSON options for camelCase
+    builder.Services.ConfigureHttpJsonOptions(options =>
+    {
+        options.SerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+        options.SerializerOptions.PropertyNameCaseInsensitive = true;
+    });
+
     // Add Carter for minimal API endpoints
     builder.Services.AddCarter();
 
@@ -110,8 +117,11 @@ try
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         await context.Database.MigrateAsync();
 
-        // Seed data only in development
-        if (app.Environment.IsDevelopment())
+        // Seed data in development or when RUN_MIGRATIONS is enabled
+        var runSeeder = app.Environment.IsDevelopment() ||
+            Environment.GetEnvironmentVariable("RUN_MIGRATIONS")?.ToLower() == "true";
+
+        if (runSeeder)
         {
             var seeder = scope.ServiceProvider.GetService<DatabaseSeeder>();
             if (seeder != null)
