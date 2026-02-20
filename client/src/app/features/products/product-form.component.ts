@@ -81,6 +81,11 @@ import { ApiService } from '../../core/services/api.service';
                 <input matInput type="number" formControlName="reorderLevel" placeholder="10">
               </mat-form-field>
 
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Reorder Quantity</mat-label>
+                <input matInput type="number" formControlName="reorderQuantity" placeholder="50">
+              </mat-form-field>
+
               <mat-form-field appearance="outline" class="w-full md:col-span-2">
                 <mat-label>Description</mat-label>
                 <textarea matInput formControlName="description" rows="3" placeholder="Product description"></textarea>
@@ -126,6 +131,7 @@ export class ProductFormComponent implements OnInit {
     costPrice: [0, [Validators.required, Validators.min(0)]],
     sellingPrice: [0, [Validators.required, Validators.min(0)]],
     reorderLevel: [10, Validators.min(0)],
+    reorderQuantity: [50, Validators.min(0)],
     isActive: [true]
   });
 
@@ -165,7 +171,8 @@ export class ProductFormComponent implements OnInit {
       sellingPrice: formValue.sellingPrice,
       barcode: formValue.barcode || null,
       description: formValue.description || null,
-      reorderLevel: formValue.reorderLevel || 10
+      reorderLevel: formValue.reorderLevel ?? 10,
+      reorderQuantity: formValue.reorderQuantity ?? 50
     };
 
     if (this.isEditMode()) {
